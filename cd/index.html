@@ -1,0 +1,345 @@
+<!doctype html>
+
+<!--
+  A presentation done entirely in Markdown, as found in extras/markdown/.
+  
+  By: @henrikingo
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Continuous delivery </title>
+    
+    <meta name="description" content="Authoring impress.js presentations in Markdown" />
+    <meta name="author" content="Me" />
+    <link rel="stylesheet" href="../../extras/highlight/styles/github.css">
+
+    <!-- Common styles for example presentations -->  
+    <link href="../../css/impress-common.css" rel="stylesheet" />
+    <!--
+        Styles specific for this example presentation. 
+    -->
+    <link href="../examples/markdown/css/markdown-slides.css" rel="stylesheet" />
+    <link href="../examples/markdown/css/devopsy.css" rel="stylesheet" />
+    <link href="../examples/markdown/css/effects.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="css/cd.css">
+
+</head>
+
+<body class="impress-not-supported">
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="impress" data-transition-duration="1000">
+
+<div id="markdown" class="step slide markdown" data-rel-x="0" data-rel-y="1200" data-rel-z="-3000">
+
+# Continuous delivery  
+## A comprehensive model
+
+-----
+
+# Concepts 
+
+* Pull discussion left
+* Small units of work
+* Independently deployable
+* Trunk Development
+* A Ubiquitous Dialect
+* Staged and gated environments
+* One path to Production
+* One source of truth
+* Measure trends and learn from mistakes
+
+-----
+
+# Pull discussion left
+
+* Every activity and decision point should be done as early in the process as possible.
+* Trending towards a goal where merging a pull request has no manual actions.
+
+-----
+
+## For example
+* Security concerns should be raised and reviewed by the security team at refinement or story mapping... Or waived if no concerns are noted
+* Architecture and design sessions happen with interested neighbors when a work item moves to in progress as a first step.
+* Static code analysis in the IDE.
+* Controls for a given deploy-able are pre-determined as a first step before even a hello world version.
+
+-----
+
+# Small units of work
+
+* To ensure the delta of verification is minimal we deploy one thing and one feature at a time.
+* Minimizes risks by limiting the amount of change
+* Maps nicely to the agile user story model of INVEST (Independant, Negotiable, Valuable, Estimable, Small, Testable) 
+
+-----
+
+# Independently deployable
+
+* Extending the concept of small units of work and supporting a micro-services architecture we further reduce risk by deploying independent components that do one thing. 
+* We implement standards ensuing non breaking changes on our public interfaces for our consumers (internal and external)  
+
+-----
+
+# Trunk development 
+
+* We invert our expectation and say any commit on main should be in production unless a control is failed
+* Through frequent (continuous) use issues in our Continuous Integration system in deploying to all stages are identified and quickly resolved
+* We use short lived feature branches in the order of less then a day between creation and merge
+* A Broken build on main is Priority for all teams involved in this domain.
+* Minimal sufficient code review 
+* Team ownership of life-cycle
+
+-----
+
+# A Ubiquitous Dialect
+
+* Establish a known and consistent set of terms for our stages, controls, reviews and process
+* Use these throughout the organization
+* Avoid acronyms and abbreviations
+* Focus on intent
+
+-----
+
+## For example  
+
+-----
+
+# Staged and gated environments
+
+![stages and example controls](./images/stages.png)
+
+* Example controls would be submitted only on a main build, failures and issues are visible short term for feature branches  
+
+-----
+
+## Verify - All branches -- Used by Developers and Automation
+
+* Your developers local machine or a CICD runner 
+* The owner of a branch is responsible to fix on a branch. It would be very very rare to break main at this stage.... Only a bad merge
+ 
+-----
+
+* We Run tests in this stage that prove developers intent of individual components within our repository
+
+-----
+
+## Example controls  
+
+* Unit test report
+* Style compliance report
+
+-----
+
+## Build - All branches -- Used by Automation only
+
+* Your developers local machine or a CICD runner
+* This stage creates an immutable deployable (Open Container Image)
+
+-----
+
+* We run tests proving developers intent regarding the packaged software and composition
+
+-----
+
+## Example controls 
+
+* Integration test report
+* Container content verification
+
+-----
+
+## Acceptance - All branches - Humans may use for QA and demo
+
+* A decoupled environment is deployed for each feature branch here
+* Every dependency possible is mocked and abstracted allowing a focus on the deployed component, not other items minimizing investigation time. 
+** Think in memory databases and mocked network APIs.
+* There is garbage collection to clean up older branch acceptance environments or could be entirely ephemeral in our runners or both
+
+-----
+ 
+* We run test scenarios specified in terms of our feature acceptance criteria 
+
+-----
+
+## Example controls
+
+* end to end Acceptance test report
+* software supply-chain security report
+* Perhaps a few our generated r-docs
+
+-----
+
+## Union - Main only - Humans May demo in this environment
+
+* A shared namespace where all deployable are deployed 
+* union instance dependancies are available and running from their own Continuous Deployment Models 
+* Each team maintains their applications under a support agreement.
+* So that other teams can rely on your service being up to date and working as not to block their verification and release. 
+* It is kept close to production.  
+
+-----
+
+* We should trend away from having the main head in this environment but not production
+
+-----
+
+* We run test scenarios to ensure interoperability and core journey of our deployable is successful
+
+-----
+
+## Example controls
+
+* Union test end to end report
+* More of our R-docs this may be where we start submitting manual documents
+* Product team Approval
+* Change management approval
+* (Stretch goal FDA approval document from a full generated 510k)  
+
+-----
+
+## Rehearsal - Main only - AUTOMATION ONLY
+
+* A final environment 
+* kept as close to production data as possible... Obfuscated and perhaps reduced
+
+-----
+
+* we run tests that verify our upgrade process has been successful.
+
+-----
+
+## Example controls
+
+* rehearsal test report
+* operation readiness
+* executive approval
+* The most difficult compliance documents that is unlikely to change  
+
+-----
+
+## Production - Main only - Its production
+
+* We can and should (Almost MUST) use feature flags to decouple release and publishing to customers,
+* We may present ab testing options to real customers.
+* We may use incremental rollout or Cannery deployment to further reduce risk.  
+* But it is only operational reasons preventing a customer accessing our new features. 
+
+-----
+
+## Getting there (Hypothetical) 
+
+* Data-model supports version n and n-1 to avoid data migration rollbacks
+* roll forward with needed changes only
+* re-deploy a previous OCI in case of a production or rehearsal failure
+* Patterns allowing graceful degradation, Circuit breaker
+
+-----
+
+# One path to Production
+
+* The trigger of any release is always a commit to main with a pull request
+* Only "Pipelines" are authorized to make changes
+* Infrastructure as application services embedded in our manifests. Cross plane in K8S
+* Platform as a service also follows this path development
+
+-----
+
+## Why one path
+
+* Ensures traceability and chain of custody for every production change
+* Prevents human error
+
+-----
+
+# One source of truth
+
+* Required controls (and evidence) are defined in the repository of each deployable; including who must submit them.
+* Code-owners define who can approve changes to controls.
+
+-----
+
+* Ci/Cd action runners are aware of controls submitted and Must wait between stages.
+* Ci/Cd actions may generate required control documents and in its final form will generate all controls 
+
+* An admissions controller ensures annotations link to a record proving of all required controls are satisfied. (K8S control plane, GITOPS Repository automation).
+
+-----   
+
+* An interface for humans that shows what must yet happen for a given commit to reach production
+
+* Manual controls are submitted in this interface to smooth tradition but may always be needed in some cases.
+
+* Submitted controls are archived and retrievable in the correct system of record.
+
+-----
+
+# Measure trends and learn from mistakes
+
+* With great power comes responsibility
+* We propose and implement metrics and measures showing all these principles are being followed and trending in a positive direction.
+* We ensure blame free postmortems are undertaken and review actions arising on a regular bases before we archive and close an incident. 
+
+
+</div>
+
+<script type="text/javascript">
+var enableBwCss = function(){
+    disableDevopsCss();
+    disableEffectsCss();
+};
+
+var enableDevopsCss = function(){
+    document.body.classList.add("devopsy");
+    disableEffectsCss();
+};
+
+var disableDevopsCss = function(){
+    document.body.classList.remove("devopsy");
+};
+
+var enableEffectsCss = function(){
+    document.body.classList.add("effects");
+    disableDevopsCss();
+};
+
+var disableEffectsCss = function(){
+    document.body.classList.remove("effects");
+};
+</script>
+
+
+
+
+
+<div id="overview" class="step" data-x="5000" data-y="4000" data-scale="10" style="pointer-events: none;" data-rotate="5">
+</div>
+
+</div>
+
+<div id="impress-toolbar"></div>
+<div id="impress-help"></div>
+
+
+<!-- Extra modules
+     Load highlight.js, mermaid.js and markdown.js from extras.
+     See also src/plugins/extras/extras.js -->
+<script type="text/javascript" src="../extras/highlight/highlight.pack.js"></script>
+<script type="text/javascript" src="../extras/mermaid/mermaid.min.js"></script>
+<script type="text/javascript" src="../extras/markdown/markdown.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> -->
+
+<!--
+    To make all described above really work, you need to include impress.js in the page.
+    You also need to call a `impress().init()` function to initialize impress.js presentation.
+    And you should do it in the end of your document. 
+-->
+<script type="text/javascript" src="../js/impress.js"></script>
+<script>impress().init();</script>
+</body>
+</html>
